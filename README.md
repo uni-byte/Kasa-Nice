@@ -6,4 +6,4 @@ Note: the app can only discover devices in your LOCAL NETWORK, it has no access 
 
 Tested on Windows 10 only so far, BUT should work on other OSes as well. Lemme know ;)
 
-![kasa-nice screenshot](kasa-nice/Kasa GUI Screenshot.png?raw=true "Screenshot")
+![kasa-nice screenshot]("kasa-nice/Kasa GUI Screenshot.png")
