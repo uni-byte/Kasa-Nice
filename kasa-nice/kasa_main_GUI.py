@@ -85,8 +85,6 @@ async def handle_lightstrip(dev_alias, effect, switch):
       switch.value = True
 
 
-
-
 async def handle_metering(dev_alias):
   for device in devices.values():
     if device.alias == dev_alias and device.has_emeter:
@@ -168,12 +166,6 @@ with asyncio.Runner() as runner:
   for addr, device in devices.items():
     runner.run(device.update())
   runner.close()
-
-#with open('log.txt', 'w') as f:
-#  for device in devices.values():
-#    for prop in device:
-#      f.write(str(prop))
-#      f.write('\n')
 
 with ui.tabs().classes('w-full') as tabs:
   one =ui.tab('Devices')
