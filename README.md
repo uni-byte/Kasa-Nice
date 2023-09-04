@@ -5,3 +5,5 @@ Uses the NICEGUI library to launch a desktop application (or browser, through lo
 Note: the app can only discover devices in your LOCAL NETWORK, it has no access to your cloud account.
 
 Tested on Windows 10 only so far, BUT should work on other OSes as well. Lemme know ;)
+
+![kasa-nice screenshot](kasa-nice/Kasa GUI Screenshot.png?raw=true "Screenshot")
