@@ -1,5 +1,5 @@
 # Kasa-Nice
-A GUI application for python-kasa to control devices in your local network.
+A desktop GUI application for python-kasa to control devices in your local network.
 
 Uses the NICEGUI library to launch a desktop application (or browser, through http://localhost:8080/) from which you are able to control your TP-Link Kasa smart home devices.
 
