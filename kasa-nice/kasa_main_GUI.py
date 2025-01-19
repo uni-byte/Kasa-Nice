@@ -1,15 +1,16 @@
-from nicegui import ui, Tailwind
+from nicegui import ui #,Tailwind
 from nicegui import app as nicegui_app
 import asyncio
-import calendar
-import plotly.graph_objects as go
+# import calendar
+# import plotly.graph_objects as go
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from kasa import Discover
+from kasa_nice_usage import draw_kasa_plots
 
 #https://stackoverflow.com/questions/76726671/im-populating-some-cards-using-for-loop-in-nicegui-each-has-a-label-and-a-butto
 #https://github.com/python-kasa/python-kasa/issues/345 #pertaining to KL125 bulbs
 
-nicegui_app.add_static_files('/static', 'static')
+nicegui_app.add_static_files('/static', 'kasa-nice/static')
 ui.colors(primary = '#4acbd6')
 dark = ui.dark_mode(True)
 devices = {}
@@ -37,16 +38,15 @@ def hsv_to_hex(hsv):
 
 
 def set_device_icon(device_type):
-  if device_type == 'Bulb':
-    return ui.icon('lightbulb', color='primary').classes('text-5xl')
-  if device_type == 'Plug':
-    return ui.icon('outlet', color='primary').classes('text-5xl')
-  if device_type == 'Dimmer':
-    return ui.icon('tungsten', color='primary').classes('text-5xl')
-  if device_type == 'Strip':
-    return ui.icon('electrical_services', color='primary').classes('text-5xl')
-  if device_type == 'LightStrip':
-    return ui.icon('linear_scale', color='primary').classes('text-5xl')
+  icons = {
+    'Bulb': 'lightbulb',
+    'Plug': 'outlet',
+    'Dimmer': 'tungsten',
+    'Strip': 'electrical_services',
+    'LightStrip': 'linear_scale'
+  }
+  icon_name = icons.get(device_type, 'help')
+  return ui.icon(icon_name, color='primary').classes('text-5xl')
 
 
 async def handle_color_picker(dev_alias, hex_color, button, switch):
@@ -83,17 +83,6 @@ async def handle_lightstrip(dev_alias, effect, switch):
       ui.notify(message=f'{device.alias} set to {effect}', \
                 position='top', color='info')
       switch.value = True
-
-
-async def handle_metering(dev_alias):
-  for device in devices.values():
-    if device.alias == dev_alias and device.has_emeter:
-      try:
-        daily_usage_dict = await device.get_emeter_daily()
-        monthly_usage_dict = await device.get_emeter_monthly()
-        return [daily_usage_dict, monthly_usage_dict]
-      except Exception as e:
-        print("An error occurred:", str(e))
 
 
 async def handle_discovery(ip_address):
@@ -213,32 +202,8 @@ with ui.tab_panels(tabs, value=one).classes('w-full'):
     pinned_devices = ui.element()
   
   with ui.tab_panel(three):
-    for type in ['Bulb', 'Plug', 'Dimmer', 'LightStrip']:
-        ui.label(text=f'{type}s').classes('h1 text-primary')
-        for device in devices.values():
-          if device.device_type.name == type and device.has_emeter:
-            usage = asyncio.run(handle_metering(device.alias))
-            if usage is not None:
-              with ui.expansion(text=device.alias):  
-                with ui.splitter() as splitter:
-                  with splitter.before:
-                    ui.label('Daily')
-                  
-                    daily = go.Figure(go.Scatter(x=[d for d in usage[0].keys()], y=[u for u in usage[0].values()]))
-                    daily.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-                    daily.update_xaxes(tickformat="%b", tickvals=[d for d in usage[0].keys()])
-                    ui.plotly(daily).classes('w-96 h-48')
-                  with splitter.after:
-                    ui.label('Monthly')
-                    plotx, ploty = [m for m in usage[1].keys()], [u for u in usage[1].values()]
-                    monthly = go.Figure(go.Scatter(x=plotx, y=ploty))
-                    monthly.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-                    monthly.update_xaxes(tickformat="%b",\
-                                      tickvals=plotx,\
-                                      ticktext=[calendar.month_abbr[i - 1] for i in plotx if i != 0],)
-                    ui.plotly(monthly).classes('w-96 h-48')
-                  
-        ui.separator()
+    draw_kasa_plots(devices)              
+    ui.separator()
 
 with ui.header() as header:
   header.style(f'background-color:white!important')
