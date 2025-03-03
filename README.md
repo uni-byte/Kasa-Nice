@@ -5,7 +5,7 @@ Uses the NICEGUI library to launch a desktop application (or browser, through ht
 
 Note: the app can only discover devices in your LOCAL NETWORK, it has no access to your cloud account.
 
-Tested on Windows 10 only so far, BUT should work on other OSes as well. Lemme know ;)
+As far as I know, works in Windows 10 and 11, MacOS and Linux. Requires Python 3.11+
 
 ![kasa-nice screenshot](Kasa_GUI_Screenshot.png?raw=True)
 
